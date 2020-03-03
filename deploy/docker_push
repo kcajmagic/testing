@@ -5,11 +5,7 @@ echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
 LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1` | tail -1 | sed 's/v\(.*\)/\1/')
 
-docker build \
-  --build-arg VERSION=$TRAVIS_TAG \
-  --build-arg GITCOMMIT=$(git rev-parse --short HEAD) \
-  --build-arg BUILDTIME=$(date -u '+%Y-%m-%d %H:%M:%S') \
-  -f ./deploy/Dockerfile -t kcajmagic/testing:$TRAVIS_TAG .
+docker build --build-arg VERSION=$TRAVIS_TAG --build-arg GITCOMMIT=$(git rev-parse --short HEAD)   --build-arg BUILDTIME=$(date -u '+%Y-%m-%d %H:%M:%S')   -f ./deploy/Dockerfile -t kcajmagic/testing:$TRAVIS_TAG .
 
 docker push kcajmagic/testing:$TRAVIS_TAG
 
