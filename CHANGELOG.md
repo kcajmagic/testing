@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [v0.5.0]
+- bump go to v1.14
+
 ## [v0.4.3]
 - trying to get copr to work
 - made my own repo to fiddle with repo webhook settings

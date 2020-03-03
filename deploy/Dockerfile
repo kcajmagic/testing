@@ -1,25 +1,36 @@
-FROM golang:alpine as builder
+FROM docker.io/library/golang:1.14-alpine as builder
+
 MAINTAINER Jack Murdock <jack_murdock@comcast.com>
 
-WORKDIR /go/src/github.com/kcajmagic/testing
+WORKDIR /go/src/github.com/xmidt-org/testing
+
 ARG VERSION=unknown
 ARG GITCOMMIT=unknown
 ARG BUILDTIME=unknown
 
-RUN apk update && apk upgrade && \
-    apk add --no-cache bash git openssh
+
+RUN apk add --no-cache --no-progress \
+    ca-certificates \
+    make \
+    git \
+    openssh \
+    gcc \
+    libc-dev \
+    upx
 
 COPY . .
-RUN GO111MODULE=on go build \
-  -o testing_linux_amd64 \
-  -ldflags "-X 'main.BuildTime=${BUILDTIME}' -X main.GitCommit=${GITCOMMIT} -X main.Version=${VERSION}"
+RUN make build
 
-FROM alpine
+FROM scratch
 
-RUN apk --no-cache add ca-certificates
+COPY --from=builder /etc/passwd /etc/passwd
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=builder /go/src/github.com/xmidt-org/testing/testing.yaml /testing.yaml
+COPY --from=builder /go/src/github.com/xmidt-org/testing/testing /testing
+COPY --from=builder /go/src/github.com/xmidt-org/testing/deploy/Dockerfile /go/src/github.com/xmidt-org/testing/NOTICE /go/src/github.com/xmidt-org/testing/LICENSE /go/src/github.com/xmidt-org/testing/CHANGELOG.md /
 
 EXPOSE 8080
 
-COPY --from=builder /go/src/github.com/kcajmagic/testing/testing_linux_amd64 /
-ENTRYPOINT ["/testing_linux_amd64"]
+USER nobody
 
+ENTRYPOINT ["/testing"]
