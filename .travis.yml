@@ -53,8 +53,8 @@ jobs:
         api_key: "$GH_TOKEN"
         file: ./.ignore/*
         skip_cleanup: true
-    - stage: release
-      name: "Make a Release"
+    - stage: docker-release
+      name: "Make Docker Release"
       script: skip
       deploy:
         - provider: script
