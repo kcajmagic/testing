@@ -10,11 +10,6 @@ os:
 services:
   - docker
 
-matrix:
-  allow_failures:
-    - go: tip
-  fast_finish: true
-
 branches:
   only:
     - master
@@ -23,6 +18,8 @@ branches:
 script:
   - make style codecov
 jobs:
+  allow_failures:
+    - go: tip
   include:
     - stage: integration
       name: "Integration Tests"
